@@ -1,2 +1,2 @@
 # Soduku
-Soduku solver application written in Java
+Soduku solver application written in Python
