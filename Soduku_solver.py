@@ -1,6 +1,4 @@
-
-
-def displayBoard():
+def displayBoard(board):
     for i in range(9):
         if (i != 0) and (i % 3 == 0):
             print("- - - - - - - - - - -")
@@ -13,14 +11,14 @@ def displayBoard():
             else:
                 print(str(board[i][j]) + " ", end = "")
 
-def emptyCells():
+def emptyCells(board):
     for i in range(9):
         for j in range(9):
             if (board[i][j] == 0):
                 return (i, j)
     return None
 
-def checkNumber(number, row, col):
+def checkNumber(board, number, row, col):
     for i in range(9):
         if (board[row][i] == number) and (col != i):
             return False
@@ -36,22 +34,18 @@ def checkNumber(number, row, col):
 
     return True
 
-def solve():
-    if not (emptyCells()):
+def solve(board):
+    if not (emptyCells(board)):
         return True
     else:
-        row, col = emptyCells()
+        r, c = emptyCells(board)
     
     for i in range(1, 10):
-        if (checkNumber(i, row, col)):
-            board[row][col] = i
+        if (checkNumber(board, i, r, c)):
+            board[r][c] = i
 
-            if (solve()):
+            if (solve(board)):
                 return True
                 
-            board[row][col] = 0
+            board[r][c] = 0
     return False
-
-
-solve()
-displayBoard()

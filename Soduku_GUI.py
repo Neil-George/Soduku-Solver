@@ -1,16 +1,16 @@
-from typing import Tuple
 import pygame
 from Soduku_solver import *
+pygame.init()
 
 class Table:
-    board = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],  [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    board = [[0, 7, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],  [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     def __init__(self, width, height):
         self.rows = 9
         self.columns = 9
         self.width = width
         self.height = height
-        self.cells = [[Cell(self.board[i][j], i, j, w, h) for j in range(9)] for i in range(9)]
+        self.cells = [[Cell(self.board[i][j], i, j, width, height) for j in range(9)] for i in range(9)]
         self.solverBoard = None
         self.solvingCell = None
 
@@ -90,15 +90,15 @@ class Cell:
         self.solvingCell = False
 
     def draw(self, screen):
-        font = pygame.font.SysFont("Ariel", 40)
+        text = pygame.font.SysFont("comicsans", 40)
         xPos = self.col * (self.width / 9)
         yPos = self.row * (self.width / 9)
 
         if (self.startVal != 0) and (self.val == 0):
-            startNum = font.render(str(self.startVal), 1, (0, 0, 0))
+            startNum = text.render(str(self.startVal), 1, (0, 0, 0))
             screen.blit(startNum, (xPos+5, yPos+5))
-        elif (self.val != 0):
-            startNum = font.render(str(self.val), 1, (0, 0, 0))
+        elif (self.startVal != 0):
+            startNum = text.render(str(self.val), 1, (0, 0, 0))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
         if (self.solvingCell == True):
@@ -111,7 +111,7 @@ class Cell:
         self.startVal = val
 
 def window(screen, board):
-    screen.fill((255, 255, 255))
+    screen.fill((211,211,211))
     board.draw(screen)
 
 
@@ -149,3 +149,28 @@ def main():
                     keyPressed = 8
                 if (event.type == pygame.K_9):
                     keyPressed = 9
+                
+                if (event.key == pygame.K_RETURN):
+                    r, c = board.solvingCell
+
+                    if (board.cells[r][c].startVal != 0):
+                        if (board.testValue(board.cubes[r][c].startVal)):
+                            print("well done")
+                        else:
+                            print("not correct")
+                        keyPressed = None
+                
+                if (event.type == pygame.MOUSEBUTTONDOWN):
+                    position = pygame.mouse.get_pos()
+                    clickPosition = board.click(position)
+                    if (clickPosition):
+                        board.choose(clickPosition[0], clickPosition[1])
+                        keyPressed = None
+            
+            if (board.solvingCell) and (keyPressed != None):
+                board.attempt(keyPressed)
+
+            window(screen, board)
+            pygame.display.update()
+main()
+pygame.quit()
