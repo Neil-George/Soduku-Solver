@@ -119,7 +119,7 @@ def window(screen, board):
 def main():
     screen = pygame.display.set_mode((900, 900))
     pygame.display.set_caption("Soduku Solver")
-    board = Table(600, 600)
+    board = Table(900, 900)
     play = True
     keyPressed = None
     
