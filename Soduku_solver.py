@@ -29,7 +29,7 @@ def checkNumber(board, number, row, col):
 
     for i in range(row - (row % 3), (row - (row % 3)) + 3):
         for j in range(col - (col % 3), (col - (col % 3)) + 3):
-            if (board[i][j] == number) and row != i and col != j:
+            if (board[i][j] == number) and (row != i) and (col != j):
                 return False
 
     return True
@@ -38,7 +38,7 @@ def solve(board):
     if not (emptyCells(board)):
         return True
     else:
-        r, c = emptyCells(board)
+        (r, c) = emptyCells(board)
     
     for i in range(1, 10):
         if (checkNumber(board, i, r, c)):

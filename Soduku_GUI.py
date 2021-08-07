@@ -1,5 +1,6 @@
 import pygame
 from Soduku_solver import *
+from pygame.locals import *
 pygame.init()
 
 class Table:
@@ -12,7 +13,7 @@ class Table:
         self.height = height
         self.cells = [[Cell(self.board[i][j], i, j, width, height) for j in range(9)] for i in range(9)]
         self.solverBoard = None
-        self.solvingCell = None
+        self.CellToSolve = None
 
     def draw(self, screen):
         for i in range(10):
@@ -32,11 +33,11 @@ class Table:
         self.solverBoard = [[self.cells[i][j].val for j in range(9)] for i in range(9)]
     
     def attempt(self, val):
-        r, c = self.solvingCell
+        r, c = self.CellToSolve
         self.cubes[r][c].setCell(val)
     
     def testValue(self,val):
-        r, c = self.solvingCell
+        r, c = self.CellToSolve
 
         if (self.cells[r][c].val == 0):
             self.cells[r][c].set(val)
@@ -55,10 +56,10 @@ class Table:
             for j in range(9):
                 self.cells[i][j].solvingCell = False
         self.cells[r][c].solvingCell = True
-        self.solvingCell = (r, c)
+        self.CellToSolve = (r, c)
     
     def clear(self):
-        r, c = self.solvingCell
+        r, c = self.CellToSolve
         if (self.cells[r][c].val == 0):
             self.cells[r][c].setCell(0)
 
@@ -123,10 +124,8 @@ def main():
     play = True
     keyPressed = None
     
-    while play:
+    while (play):
         for event in pygame.event.get():
-            if (event.type == pygame.QUIT):
-                play = False
             if (event.type == pygame.KEYDOWN):
                 if (event.type == pygame.K_BACKSPACE):
                     board.clear()
@@ -151,7 +150,7 @@ def main():
                     keyPressed = 9
                 
                 if (event.key == pygame.K_RETURN):
-                    r, c = board.solvingCell
+                    (r, c) = board.CellToSolve
 
                     if (board.cells[r][c].startVal != 0):
                         if (board.testValue(board.cubes[r][c].startVal)):
@@ -159,15 +158,22 @@ def main():
                         else:
                             print("not correct")
                         keyPressed = None
+
+                        if (board.finished()):
+                            print("Done")
+                            play = False
                 
-                if (event.type == pygame.MOUSEBUTTONDOWN):
+                if (event.type == pygame.MOUSEBUTTONDOWN) and (event.button == 1):
                     position = pygame.mouse.get_pos()
                     clickPosition = board.click(position)
                     if (clickPosition):
                         board.choose(clickPosition[0], clickPosition[1])
                         keyPressed = None
             
-            if (board.solvingCell) and (keyPressed != None):
+            if (event.type == pygame.QUIT):
+                play = False
+
+            if (keyPressed != None):
                 board.attempt(keyPressed)
 
             window(screen, board)
