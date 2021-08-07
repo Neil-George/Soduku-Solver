@@ -98,7 +98,7 @@ class Cell:
         if (self.startVal != 0) and (self.val == 0):
             startNum = text.render(str(self.startVal), 1, (0, 0, 0))
             screen.blit(startNum, (xPos+5, yPos+5))
-        elif (self.startVal != 0):
+        elif not(self.startVal == 0):
             startNum = text.render(str(self.val), 1, (0, 0, 0))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
@@ -127,33 +127,33 @@ def main():
     while (play):
         for event in pygame.event.get():
             if (event.type == pygame.KEYDOWN):
-                if (event.type == pygame.K_BACKSPACE):
+                if (event.key == pygame.K_BACKSPACE):
                     board.clear()
                     keyPressed = None
-                if (event.type == pygame.K_1):
+                if (event.key == pygame.K_1):
                     keyPressed = 1
-                if (event.type == pygame.K_2):
+                if (event.key == pygame.K_2):
                     keyPressed = 2
-                if (event.type == pygame.K_3):
+                if (event.key == pygame.K_3):
                     keyPressed = 3
-                if (event.type == pygame.K_4):
+                if (event.key == pygame.K_4):
                     keyPressed = 4
-                if (event.type == pygame.K_5):
+                if (event.key == pygame.K_5):
                     keyPressed = 5
-                if (event.type == pygame.K_6):
+                if (event.key == pygame.K_6):
                     keyPressed = 6
-                if (event.type == pygame.K_7):
+                if (event.key == pygame.K_7):
                     keyPressed = 7
-                if (event.type == pygame.K_8):
+                if (event.key == pygame.K_8):
                     keyPressed = 8
-                if (event.type == pygame.K_9):
+                if (event.key == pygame.K_9):
                     keyPressed = 9
                 
                 if (event.key == pygame.K_RETURN):
                     (r, c) = board.CellToSolve
 
                     if (board.cells[r][c].startVal != 0):
-                        if (board.testValue(board.cubes[r][c].startVal)):
+                        if (board.testValue(board.cells[r][c].startVal)):
                             print("well done")
                         else:
                             print("not correct")
