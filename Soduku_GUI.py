@@ -11,7 +11,7 @@ class Table:
         self.columns = 9
         self.width = width
         self.height = height
-        self.cells = [[Cell(self.board[i][j], i, j, width, height) for j in range(9)] for i in range(9)]
+        self.cells = [[Cell(self.board[r][c], r, c, width, height) for c in range(9)] for r in range(9)]
         self.solverBoard = None
         self.CellToSolve = None
 
@@ -25,16 +25,16 @@ class Table:
             pygame.draw.line(screen, (0, 0, 0), (0, i * (self.width / 9)), (self.width, i * (self.width / 9)), lineWidth)
             pygame.draw.line(screen, (0, 0, 0), (i * (self.width / 9), 0), (i * (self.width / 9), self.height), lineWidth)
 
-            for i in range(9):
-                for j in range(9):
-                    self.cells[i][j].draw(screen)
+        for r in range(9):
+            for c in range(9):
+                self.cells[r][c].draw(screen)
     
     def updateSolverBoard(self):
-        self.solverBoard = [[self.cells[i][j].val for j in range(9)] for i in range(9)]
+        self.solverBoard = [[self.cells[r][c].val for c in range(9)] for r in range(9)]
     
     def attempt(self, val):
         r, c = self.CellToSolve
-        self.cubes[r][c].setCell(val)
+        self.cells[r][c].setCell(val)
     
     def testValue(self,val):
         r, c = self.CellToSolve
@@ -43,13 +43,13 @@ class Table:
             self.cells[r][c].set(val)
             self.updateSolverBoard()
 
-            if (checkNumber(self.solverBoard, val, r, c)) and (solve(self.solverBoard)): ##Need to change solver function parameters
+            if (checkNumber(self.solverBoard, val, r, c)) and (solve(self.solverBoard)):
                 return True
             else:
                 self.cells[r][c].set(0)
                 self.cells[r][c].setCell(0)
                 self.updateSolverBoard()
-            return False
+                return False
 
     def choose(self, r, c):
         for i in range(9):
@@ -73,10 +73,11 @@ class Table:
             return None
 
     def finished(self):
-        for i in range(9):
-            for j in range(9):
-                if (self.cells[i][j].val == 0):
+        for r in range(9):
+            for c in range(9):
+                if (self.cells[r][c].val == 0):
                     return False
+
         return True
 
 class Cell:
@@ -91,14 +92,14 @@ class Cell:
         self.solvingCell = False
 
     def draw(self, screen):
-        text = pygame.font.SysFont("comicsans", 40)
+        text = pygame.font.SysFont("ariel", 60)
         xPos = self.col * (self.width / 9)
         yPos = self.row * (self.width / 9)
 
         if (self.startVal != 0) and (self.val == 0):
-            startNum = text.render(str(self.startVal), 1, (0, 0, 0))
+            startNum = text.render(str(self.startVal), 1, (128, 128, 128))
             screen.blit(startNum, (xPos+5, yPos+5))
-        elif not(self.startVal == 0):
+        elif (self.startVal != 0):
             startNum = text.render(str(self.val), 1, (0, 0, 0))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
@@ -163,20 +164,21 @@ def main():
                             print("Done")
                             play = False
                 
-                if (event.type == pygame.MOUSEBUTTONDOWN) and (event.button == 1):
-                    position = pygame.mouse.get_pos()
-                    clickPosition = board.click(position)
-                    if (clickPosition):
-                        board.choose(clickPosition[0], clickPosition[1])
-                        keyPressed = None
+            if (event.type == pygame.MOUSEBUTTONDOWN) and (event.button == 1):
+                position = pygame.mouse.get_pos()
+                clickPosition = board.click(position)
+                if (clickPosition):
+                    board.choose(clickPosition[0], clickPosition[1])
+                    keyPressed = None
             
             if (event.type == pygame.QUIT):
                 play = False
 
-            if (keyPressed != None):
-                board.attempt(keyPressed)
+        if (keyPressed != None):
+            board.attempt(keyPressed)
 
-            window(screen, board)
-            pygame.display.update()
+        window(screen, board)
+        pygame.display.update()
+
 main()
 pygame.quit()
