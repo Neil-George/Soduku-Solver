@@ -92,13 +92,13 @@ class Cell:
         self.solvingCell = False
 
     def draw(self, screen):
-        text = pygame.font.SysFont("ariel", 60)
+        text = pygame.font.SysFont("ariel", 40)
         xPos = self.col * (self.width / 9)
         yPos = self.row * (self.width / 9)
 
         if (self.startVal != 0) and (self.val == 0):
-            startNum = text.render(str(self.startVal), 1, (128, 128, 128))
-            screen.blit(startNum, (xPos+5, yPos+5))
+            startNum = text.render(str(self.startVal), 1, (100, 100, 100))
+            screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
         elif (self.startVal != 0):
             startNum = text.render(str(self.val), 1, (0, 0, 0))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
