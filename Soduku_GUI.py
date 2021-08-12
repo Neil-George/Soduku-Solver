@@ -4,7 +4,8 @@ from pygame.locals import *
 pygame.init()
 
 class Table:
-    board = [[0, 7, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],  [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    board = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],  [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
 
     def __init__(self, width, height):
         self.rows = 9
@@ -99,7 +100,7 @@ class Cell:
         if (self.startVal != 0) and (self.val == 0):
             startNum = text.render(str(self.startVal), 1, (100, 100, 100))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
-        elif (self.startVal != 0):
+        elif (self.val != 0):
             startNum = text.render(str(self.val), 1, (0, 0, 0))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
@@ -119,9 +120,10 @@ def window(screen, board):
 
 
 def main():
-    screen = pygame.display.set_mode((900, 900))
+    size = 900
+    screen = pygame.display.set_mode((size, size))
     pygame.display.set_caption("Soduku Solver")
-    board = Table(900, 900)
+    board = Table(size, size)
     play = True
     keyPressed = None
     
@@ -163,6 +165,9 @@ def main():
                         if (board.finished()):
                             print("Done")
                             play = False
+
+            if (event.type == pygame.QUIT):
+                play = False
                 
             if (event.type == pygame.MOUSEBUTTONDOWN) and (event.button == 1):
                 position = pygame.mouse.get_pos()
@@ -171,8 +176,6 @@ def main():
                     board.choose(clickPosition[0], clickPosition[1])
                     keyPressed = None
             
-            if (event.type == pygame.QUIT):
-                play = False
 
         if (keyPressed != None):
             board.attempt(keyPressed)
