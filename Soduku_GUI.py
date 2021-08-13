@@ -19,7 +19,7 @@ class Table:
     def draw(self, screen):
         for i in range(10):
             if (i % 3 == 0) and (i != 0):
-                lineWidth = 5
+                lineWidth = 4
             else:
                 lineWidth = 2
 
@@ -105,7 +105,7 @@ class Cell:
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
         if (self.solvingCell == True):
-            pygame.draw.rect(screen, (255,255,153), (xPos, yPos, (self.width / 9), (self.width / 9)), 6)
+            pygame.draw.rect(screen, (255,255,153), (xPos, yPos, (self.width / 9), (self.width / 9)), 7)
 
     def set(self, val):
         self.val = val
@@ -121,7 +121,7 @@ def window(screen, board):
 
 def main():
     size = 500
-    screen = pygame.display.set_mode((size, size))
+    screen = pygame.display.set_mode((size, size+75))
     pygame.display.set_caption("Soduku Solver")
     board = Table(size, size)
     play = True
