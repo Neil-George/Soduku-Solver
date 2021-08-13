@@ -12,7 +12,7 @@ class Table:
         self.columns = 9
         self.width = width
         self.height = height
-        self.cells = [[Cell(self.board[r][c], r, c, width, height) for c in range(9)] for r in range(9)]
+        self.cells = [[Cell(r, c, self.board[r][c], height, width) for c in range(9)] for r in range(9)]
         self.solverBoard = None
         self.CellToSolve = None
 
@@ -66,8 +66,8 @@ class Table:
 
     def click(self, position):
         if (position[0] < self.width) and (position[1] < self.height):
-            xPos = position[0] // (self.width / 9)
-            yPos = position[1] // (self.width / 9)
+            xPos = (position[0] * 9) // self.width
+            yPos = (position[1] * 9) // self.width
             
             return (int(yPos), int(xPos))
         else:
@@ -105,7 +105,7 @@ class Cell:
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
         if (self.solvingCell == True):
-            pygame.draw.rect(screen, (255, 0, 0), (xPos, yPos, (self.width / 9), (self.width / 9)), 3)
+            pygame.draw.rect(screen, (255,255,153), (xPos, yPos, (self.width / 9), (self.width / 9)), 6)
 
     def set(self, val):
         self.val = val
@@ -120,7 +120,7 @@ def window(screen, board):
 
 
 def main():
-    size = 900
+    size = 500
     screen = pygame.display.set_mode((size, size))
     pygame.display.set_caption("Soduku Solver")
     board = Table(size, size)
@@ -169,15 +169,15 @@ def main():
             if (event.type == pygame.QUIT):
                 play = False
                 
-            if (event.type == pygame.MOUSEBUTTONDOWN) and (event.button == 1):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
                 position = pygame.mouse.get_pos()
-                clickPosition = board.click(position)
-                if (clickPosition):
-                    board.choose(clickPosition[0], clickPosition[1])
+                if (board.click(position) != None):
+                    r, c = board.click(position)
+                    board.choose(r, c)
                     keyPressed = None
             
 
-        if (keyPressed != None):
+        if (board.CellToSolve) and (keyPressed != None):
             board.attempt(keyPressed)
 
         window(screen, board)
