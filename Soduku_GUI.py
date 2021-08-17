@@ -144,7 +144,7 @@ class Button:
         mouse = pygame.mouse.get_pos()
         
         if (self.topButton.collidepoint(mouse)):
-            self.topColour = self.bottomButton
+            self.topColour = self.bottomColour
 
             if (pygame.mouse.get_pressed()[0]):
                 self.distance = 0
@@ -159,19 +159,11 @@ class Button:
             self.topColour = topColour
 
 
-
-def window(screen, board, button):
-    screen.fill((211,211,211))
-    board.draw(screen)
-    button.draw(screen)
-
-
-
 def main():
     size = 600
     screen = pygame.display.set_mode((size, size+60))
     pygame.display.set_caption("Soduku Solver")
-    solveButton = Button(200, 40, "Solve", (size-210, size+10), (153,50,204), (100,149,237))
+    solveButton = Button(200, 40, "Solve", (size-210, size+10), (153,50,204), (30,144,255))
     board = Table(size, size)
     play = True
     keyPressed = None
@@ -229,7 +221,14 @@ def main():
         if (board.CellToSolve) and (keyPressed != None):
             board.attempt(keyPressed)
 
-        window(screen, board, solveButton)
+        if (solveButton.clicked):
+            print("Solve")
+            pygame.display.update()
+
+
+        screen.fill((211,211,211))
+        board.draw(screen)
+        solveButton.draw(screen)
         pygame.display.update()
 
 main()
