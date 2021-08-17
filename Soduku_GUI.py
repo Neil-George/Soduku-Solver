@@ -98,7 +98,7 @@ class Cell:
         yPos = self.row * (self.width / 9)
 
         if (self.startVal != 0) and (self.val == 0):
-            startNum = text.render(str(self.startVal), 1, (100, 100, 100))
+            startNum = text.render(str(self.startVal), 1, (0, 0, 0))
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
         elif (self.val != 0):
             startNum = text.render(str(self.val), 1, (0, 0, 0))
@@ -113,16 +113,65 @@ class Cell:
     def setCell(self, val):
         self.startVal = val
 
-def window(screen, board):
+
+class Button:
+
+    def __init__(self, width, height, label, position, colour, hoverColour):
+        self.distance = 5
+        self.position = position
+        self.topColour = colour
+        self.bottomColour = hoverColour
+        self.topButton = pygame.Rect(position, (width, height))
+        self.bottomButton = pygame.Rect(position, (width, height))
+        self.font = pygame.font.Font(None, 30)
+        self.label = self.font.render(label, True, (255, 255, 255))
+        self.labelButton = self.label.get_rect(center = self.topButton.center)
+        self.clicked = False
+
+    def draw(self, screen):
+        self.labelButton.center = self.topButton.center
+        self.topButtonPosition = self.position[1] - self.distance
+        self.bottomButton.midtop = self.topButton.midtop
+        self.bottomButton.height = self.topButton.height + self.distance
+        
+        pygame.draw.rect(screen, self.bottomColour, self.bottomButton, border_radius = 10)
+        pygame.draw.rect(screen, self.topColour, self.topButton, border_radius = 10)
+        
+        screen.blit(self.label, self.labelButton)
+        self.click(self.topColour, self.distance)
+
+    def click(self, topColour, distance):
+        mouse = pygame.mouse.get_pos()
+        
+        if (self.topButton.collidepoint(mouse)):
+            self.topColour = self.bottomButton
+
+            if (pygame.mouse.get_pressed()[0]):
+                self.distance = 0
+                self.clicked = True
+            else:
+                self.distance = distance
+
+                if (self.clicked):
+                    self.clicked = False
+        else:
+            self.distance = distance
+            self.topColour = topColour
+
+
+
+def window(screen, board, button):
     screen.fill((211,211,211))
     board.draw(screen)
+    button.draw(screen)
 
 
 
 def main():
-    size = 500
-    screen = pygame.display.set_mode((size, size+75))
+    size = 600
+    screen = pygame.display.set_mode((size, size+60))
     pygame.display.set_caption("Soduku Solver")
+    solveButton = Button(200, 40, "Solve", (size-210, size+10), (153,50,204), (100,149,237))
     board = Table(size, size)
     play = True
     keyPressed = None
@@ -180,7 +229,7 @@ def main():
         if (board.CellToSolve) and (keyPressed != None):
             board.attempt(keyPressed)
 
-        window(screen, board)
+        window(screen, board, solveButton)
         pygame.display.update()
 
 main()
