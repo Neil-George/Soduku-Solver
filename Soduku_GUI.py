@@ -7,13 +7,12 @@ class Table:
     
 
     def __init__(self, width, height, board):
-        self.board = board
         self.rows = 9
         self.columns = 9
         self.width = width
         self.height = height
-        self.cells = [[Cell(r, c, self.board[r][c], height, width) for c in range(9)] for r in range(9)]
-        self.solverBoard = self.board
+        self.cells = [[Cell(r, c, board[r][c], height, width) for c in range(9)] for r in range(9)]
+        self.solverBoard = board
         self.CellToSolve = None
 
     def draw(self, screen):
@@ -153,7 +152,6 @@ class Button:
                 self.distance = distance
 
                 if (self.clicked):
-                    print("Print")
                     self.clicked = False
         else:
             self.distance = distance
@@ -199,14 +197,9 @@ def main():
                     (r, c) = board.CellToSolve
 
                     if (board.cells[r][c].startVal != 0):
-                        if (board.testValue(board.cells[r][c].startVal)):
-                            print("well done")
-                        else:
-                            print("not correct")
                         keyPressed = None
 
                         if (board.finished()):
-                            print("Done")
                             play = False
 
             if (event.type == pygame.QUIT):
@@ -229,16 +222,12 @@ def main():
 
 
         if (solveButton.clicked):
-            print("Solve")
             solveButton = Button(200, 40, "Solve", (size-210, size+10), (186,85,211), (153,50,204))
             solveButton.draw(screen)
             pygame.display.update()
                 
-            sodukuBoard = solve(board.solverBoard)
-            board = Table(size, size, sodukuBoard)
-
-
-
+            solve(board.solverBoard)
+            board = Table(size, size, board.solverBoard)
 
         screen.fill((211,211,211))
         board.draw(screen)
