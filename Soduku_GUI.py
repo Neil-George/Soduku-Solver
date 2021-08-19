@@ -4,16 +4,16 @@ from pygame.locals import *
 pygame.init()
 
 class Table:
-    board = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],  [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    
 
-
-    def __init__(self, width, height):
+    def __init__(self, width, height, board):
+        self.board = board
         self.rows = 9
         self.columns = 9
         self.width = width
         self.height = height
         self.cells = [[Cell(r, c, self.board[r][c], height, width) for c in range(9)] for r in range(9)]
-        self.solverBoard = None
+        self.solverBoard = self.board
         self.CellToSolve = None
 
     def draw(self, screen):
@@ -105,7 +105,7 @@ class Cell:
             screen.blit(startNum, (xPos + ((self.width / 9) / 2 - startNum.get_width() / 2), yPos + ((self.width / 9) / 2 - startNum.get_height() / 2)))
 
         if (self.solvingCell == True):
-            pygame.draw.rect(screen, (255,255,153), (xPos, yPos, (self.width / 9), (self.width / 9)), 7)
+            pygame.draw.rect(screen, (30,144,255), (xPos, yPos, (self.width / 9), (self.width / 9)), 7)
 
     def set(self, val):
         self.val = val
@@ -130,12 +130,12 @@ class Button:
 
     def draw(self, screen):
         self.labelButton.center = self.topButton.center
-        self.topButtonPosition = self.position[1] - self.distance
+        self.topButton.y = self.position[1] - self.distance
         self.bottomButton.midtop = self.topButton.midtop
         self.bottomButton.height = self.topButton.height + self.distance
         
-        pygame.draw.rect(screen, self.bottomColour, self.bottomButton, border_radius = 10)
-        pygame.draw.rect(screen, self.topColour, self.topButton, border_radius = 10)
+        pygame.draw.rect(screen, self.bottomColour, self.bottomButton, border_radius = 15)
+        pygame.draw.rect(screen, self.topColour, self.topButton, border_radius = 15)
         
         screen.blit(self.label, self.labelButton)
         self.click(self.topColour, self.distance)
@@ -153,6 +153,7 @@ class Button:
                 self.distance = distance
 
                 if (self.clicked):
+                    print("Print")
                     self.clicked = False
         else:
             self.distance = distance
@@ -160,11 +161,12 @@ class Button:
 
 
 def main():
+    sodukuBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0],  [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
     size = 600
     screen = pygame.display.set_mode((size, size+60))
     pygame.display.set_caption("Soduku Solver")
-    solveButton = Button(200, 40, "Solve", (size-210, size+10), (153,50,204), (30,144,255))
-    board = Table(size, size)
+    solveButton = Button(200, 40, "Solve", (size-210, size+10), (186,85,211), (153,50,204))
+    board = Table(size, size, sodukuBoard)
     play = True
     keyPressed = None
     
@@ -221,9 +223,21 @@ def main():
         if (board.CellToSolve) and (keyPressed != None):
             board.attempt(keyPressed)
 
+        if (solveButton.topButton.collidepoint(pygame.mouse.get_pos()) != True):
+            solveButton.topColour = (186,85,211)
+            
+
+
         if (solveButton.clicked):
             print("Solve")
+            solveButton = Button(200, 40, "Solve", (size-210, size+10), (186,85,211), (153,50,204))
+            solveButton.draw(screen)
             pygame.display.update()
+                
+            sodukuBoard = solve(board.solverBoard)
+            board = Table(size, size, sodukuBoard)
+
+
 
 
         screen.fill((211,211,211))
